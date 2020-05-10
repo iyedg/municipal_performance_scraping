@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "municipal_performance_scraping"
+version = "0.1.0"
+description = ""
+authors = ["Iyed Ghedamsi <iyed.ghdemsi@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.6.5"
+pandas = "^1.0.3"
+sqlalchemy = "^1.3.16"
+requests = "^2.23.0"
+loguru = "^0.4.1"
+pyprojroot = "^0.2.0"
+pandera = "^0.3.2"
+sqlalchemy-stubs = "^0.3"
+pandas-log = "^0.1.7"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+pylama = "^7.7.1"
+mypy = "^0.770"
+black = {version = "^19.10b0", allow-prereleases = true}
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
