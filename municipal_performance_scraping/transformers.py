@@ -1,4 +1,6 @@
 import re
+import pandera as pa
+from pandera import check_output
 from itertools import chain, cycle
 from typing import List, Union, Dict
 from loguru import logger
@@ -6,6 +8,16 @@ from loguru import logger
 import pandas as pd
 
 
+transformed_performance_df_schema = pa.DataFrameSchema(
+    columns={
+        "criterion_id": pa.Column(pa.Int, nullable=False),
+        "name_ar": pa.Column(pa.String, nullable=False),
+        "name_fr": pa.Column(pa.String, nullable=False),
+        "max_score": pa.Column(pa.Int, nullable=False),
+        "score": pa.Column(pa.Int, nullable=False),
+        "parent_id": pa.Column(pa.Int, nullable=True),
+    }
+)
 id_regex = r"(?P<{}>\d+)"
 var_name_regex = r"(?:_(?P<{}>[a-z]+_[a|f]r|[a-z]+)(?:_|$)+|$)"
 
@@ -87,6 +99,7 @@ def transform_level(
     return transformed_level_df
 
 
+@check_output(transformed_performance_df_schema)
 def transform_performance_response(json: Dict) -> pd.DataFrame:
     standardized_column_names = {
         "nom_ar": "name_ar",
@@ -133,4 +146,30 @@ def transform_performance_response(json: Dict) -> pd.DataFrame:
         )
     ).rename(columns=standardized_column_names)
 
-    return pd.concat([domains_df, sub_domains_df, criteria_df])
+    return (
+        pd.concat([domains_df, sub_domains_df, criteria_df])
+        .pipe(lambda df: df.assign(institution="government"))
+        .pipe(
+            lambda df: df.assign(
+                criterion_id=pd.to_numeric(df["criterion_id"]),
+                max_score=pd.to_numeric(df["max_score"]),
+                score=pd.to_numeric(df["score"]),
+                parent_id=pd.to_numeric(df["parent_id"]),
+                name_ar=df["name_ar"].str.replace("\r\n", " "),
+                name_fr=df["name_fr"].str.replace("\r\n", " "),
+            )
+        )
+        .reset_index(drop=True)
+    )
+
+
+def transform_performance_for_criteria(json: Dict):
+    return transform_performance_response(json).drop(columns=["score"])
+
+
+def transform_performance_for_evaluations(json: Dict, municipality_id: int, year: int):
+    return (
+        transform_performance_response(json)
+        .pipe(lambda df: df.assign(municipality_id=municipality_id, year=year))
+        .drop(columns=["name_ar", "name_fr", "max_score", "parent_id", "institution"])
+    )

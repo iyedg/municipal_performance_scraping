@@ -8,9 +8,12 @@ from sqlalchemy import (
     create_engine,
 )
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import backref, relationship
-from config import DB_PATH
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import backref, relationship, sessionmaker
+
+try:
+    from .config import DB_PATH
+except ImportError:
+    from config import DB_PATH
 
 
 engine = create_engine(DB_PATH)
