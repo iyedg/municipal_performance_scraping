@@ -43,7 +43,11 @@ def transform_raw_performance_response(raw_response: dict) -> pd.DataFrame:
     }
 
     for domain_id, domain in raw_response.items():
-        normalized_domain = {"parent_id": None, "criterion_id": domain_id}
+        normalized_domain = {
+            "parent_id": None,
+            "criterion_id": domain_id,
+            "level": "domain",
+        }
         glommed = glom(domain, domain_spec)
 
         normalized_domain.update(glommed)
@@ -53,6 +57,7 @@ def transform_raw_performance_response(raw_response: dict) -> pd.DataFrame:
             normalized_subdomain = {
                 "parent_id": domain_id,
                 "criterion_id": f"{domain_id}{subdomain_id}",
+                "level": "subdomain",
             }
             glommed = glom(subdomain, subdomain_spec)
 
@@ -63,6 +68,7 @@ def transform_raw_performance_response(raw_response: dict) -> pd.DataFrame:
                 normalized_criterion = {
                     "parent_id": subdomain_id,
                     "criterion_id": f"{domain_id}{subdomain_id}{criterion_id}",
+                    "level": "criterion",
                 }
                 glommed = glom(criterion, criterion_spec)
 
@@ -76,4 +82,8 @@ def transform_performance_for_evaluations(
 ):
     return df.pipe(
         lambda df: df.assign(municipality_id=municipality_id, year=year)
-    ).drop(columns=["name_ar", "name_fr", "max_score", "parent_id"])
+    ).drop(columns=["name_ar", "name_fr", "max_score", "parent_id", "level"])
+
+
+def transform_performance_for_criteria(df: pd.DataFrame) -> pd.DataFrame:
+    return df.drop(columns=["score"])

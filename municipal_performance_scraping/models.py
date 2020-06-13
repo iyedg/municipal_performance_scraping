@@ -26,19 +26,14 @@ class Criterion(Base):
     name_ar = Column(String, nullable=False, unique=True)
     name_fr = Column(String, nullable=False, unique=True)
     max_score = Column(Integer, nullable=False)
-    institution = Column(String, nullable=False)
+    level = Column(String, nullable=False)
     parent_id = Column(Integer, ForeignKey("criteria.criterion_id"), nullable=True)
     parent = relationship(
         "Criterion", backref=backref("children", lazy=True), remote_side=[criterion_id]
     )
 
     __table_args__ = (
-        UniqueConstraint(
-            "name_ar",
-            "name_fr",
-            "institution",
-            name="unique_criterion_name_per_institution",
-        ),
+        UniqueConstraint("name_ar", "name_fr", name="unique_criterion_name",),
     )
 
 
