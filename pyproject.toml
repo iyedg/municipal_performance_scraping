@@ -19,12 +19,17 @@ requests-cache = "^0.5.2"
 pytest-watch = "^4.2.0"
 pytest-testmon = "^1.0.2"
 glom = "^20.5.0"
+typer = "^0.2.1"
+colorama = "^0.4.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
 pylama = "^7.7.1"
 mypy = "^0.770"
 black = {version = "^19.10b0", allow-prereleases = true}
+
+[tool.poetry.scripts]
+munperf = "municipal_performance_scraping.cli:app"
 
 [build-system]
 requires = ["poetry>=0.12"]
