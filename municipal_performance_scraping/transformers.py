@@ -69,3 +69,11 @@ def transform_raw_performance_response(raw_response: dict) -> pd.DataFrame:
                 normalized_criterion.update(glommed)
                 normalized_data.append(normalized_criterion)
     return pd.DataFrame(normalized_data)
+
+
+def transform_performance_for_evaluations(
+    df: pd.DataFrame, municipality_id: int, year: int
+):
+    return df.pipe(
+        lambda df: df.assign(municipality_id=municipality_id, year=year)
+    ).drop(columns=["name_ar", "name_fr", "max_score", "parent_id"])

@@ -6,7 +6,10 @@ from tqdm import tqdm
 
 from . import models
 from .extractors import extract_performance_data, extract_raw_official_names
-from .transformers import transform_raw_performance_response
+from .transformers import (
+    transform_raw_performance_response,
+    transform_performance_for_evaluations,
+)
 
 
 def load_governorates_prep(df):
@@ -95,7 +98,8 @@ def load_evaluations():
             try:
                 transformed_performance_data.append(
                     transform_performance_for_evaluations(
-                        future.result(), **future_extracted_performance_data[future],
+                        transform_raw_performance_response(future.result()),
+                        **future_extracted_performance_data[future],
                     ),
                 )
             except Exception as e:
