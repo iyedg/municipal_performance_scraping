@@ -65,6 +65,14 @@ d = ["aiohttp (>=3.3.2)", "aiohttp-cors"]
 
 [[package]]
 category = "main"
+description = "When they're not builtins, they're boltons."
+name = "boltons"
+optional = false
+python-versions = "*"
+version = "20.1.0"
+
+[[package]]
+category = "main"
 description = "Python package for providing Mozilla's CA Bundle."
 name = "certifi"
 optional = false
@@ -125,6 +133,33 @@ name = "docopt"
 optional = false
 python-versions = "*"
 version = "0.6.2"
+
+[[package]]
+category = "main"
+description = "A command-line application framework (and CLI parser). Friendly for users, full-featured for developers."
+name = "face"
+optional = false
+python-versions = "*"
+version = "20.1.1"
+
+[package.dependencies]
+boltons = ">=20.0.0"
+
+[[package]]
+category = "main"
+description = "A declarative object transformer and formatter, for conglomerating nested data."
+name = "glom"
+optional = false
+python-versions = "*"
+version = "20.5.0"
+
+[package.dependencies]
+attrs = "*"
+boltons = ">=19.3.0"
+face = "*"
+
+[package.extras]
+yaml = ["pyyaml"]
 
 [[package]]
 category = "main"
@@ -689,7 +724,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "d65c39b874f19fde00165ed83c111806d48fa5fff3daa16a94752eaca321488f"
+content-hash = "51b301d028f97104ce85042d5a6d34b4b712f1147449cc142c4dc091db002650"
 python-versions = "^3.6.5"
 
 [metadata.files]
@@ -712,6 +747,10 @@ attrs = [
 black = [
     {file = "black-19.10b0-py36-none-any.whl", hash = "sha256:1b30e59be925fafc1ee4565e5e08abef6b03fe455102883820fe5ee2e4734e0b"},
     {file = "black-19.10b0.tar.gz", hash = "sha256:c2edb73a08e9e0e6f65a0e6af18b059b8b1cdd5bef997d7a0b181df93dc81539"},
+]
+boltons = [
+    {file = "boltons-20.1.0-py2.py3-none-any.whl", hash = "sha256:b3fc2b711f50cd975e726324d98e0bd5a324dd7e3b81d5e6a1b03c542d0c66c4"},
+    {file = "boltons-20.1.0.tar.gz", hash = "sha256:6e890b173c5f2dcb4ec62320b3799342ecb1a6a0b2253014455387665d62c213"},
 ]
 certifi = [
     {file = "certifi-2020.4.5.1-py2.py3-none-any.whl", hash = "sha256:1d987a998c75633c40847cc966fcf5904906c920a7f17ef374f5aa4282abd304"},
@@ -767,6 +806,14 @@ coverage = [
 ]
 docopt = [
     {file = "docopt-0.6.2.tar.gz", hash = "sha256:49b3a825280bd66b3aa83585ef59c4a8c82f2c8a522dbe754a8bc8d08c85c491"},
+]
+face = [
+    {file = "face-20.1.1-py2-none-any.whl", hash = "sha256:3790311a7329e4b0d90baee346eecad54b337629576edf3a246683a5f0d24446"},
+    {file = "face-20.1.1.tar.gz", hash = "sha256:7d59ca5ba341316e58cf72c6aff85cca2541cf5056c4af45cb63af9a814bed3e"},
+]
+glom = [
+    {file = "glom-20.5.0-py2-none-any.whl", hash = "sha256:953cf65080dbe01db03b4d4fa0743f9a10e6e35f5404807fdc59425ca7af19e6"},
+    {file = "glom-20.5.0.tar.gz", hash = "sha256:e753d2e8d16647ffcd9f0f99ac85d3db523ff0a1f097cf0a154a60702bca7e42"},
 ]
 humanize = [
     {file = "humanize-2.4.0-py3-none-any.whl", hash = "sha256:07dd1293bac6c77daa5ccdc22c0b41b2315bee0e339a9f035ba86a9f1a272002"},
