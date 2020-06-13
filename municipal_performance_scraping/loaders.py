@@ -6,12 +6,7 @@ from tqdm import tqdm
 
 from . import models
 from .extractors import extract_performance_data, extract_raw_official_names
-
-# from .transformers import (
-#     transform_performance_response,
-#     transform_performance_for_criteria,
-#     transform_performance_for_evaluations,
-# )
+from .transformers import transform_raw_performance_response
 
 
 def load_governorates_prep(df):
@@ -51,9 +46,23 @@ def load_municipalities():
     )
 
 
+def transform_performance_for_criteria(df: pd.DataFrame) -> pd.DataFrame:
+    return df.assign(institution="government").drop(columns=["score"])
+
+
 def load_performance_criteria():
+    """
+    columns:
+    - name_ar
+    - name_fr
+    - max_score
+    - institution
+    - parent_id
+    """
     perf_response = extract_performance_data(1313, 2017)
-    transformed = transform_performance_for_criteria(perf_response)
+    transformed = transform_raw_performance_response(perf_response).pipe(
+        transform_performance_for_criteria
+    )
     transformed.to_sql(
         name="criteria", con=models.engine, index=False, if_exists="append"
     )

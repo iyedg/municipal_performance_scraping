@@ -43,7 +43,7 @@ def transform_raw_performance_response(raw_response: dict) -> pd.DataFrame:
     }
 
     for domain_id, domain in raw_response.items():
-        normalized_domain = {"parent_criterion_id": None, "criterion_id": domain_id}
+        normalized_domain = {"parent_id": None, "criterion_id": domain_id}
         glommed = glom(domain, domain_spec)
 
         normalized_domain.update(glommed)
@@ -51,7 +51,7 @@ def transform_raw_performance_response(raw_response: dict) -> pd.DataFrame:
 
         for subdomain_id, subdomain in glom(domain, ("sd", T.items())):
             normalized_subdomain = {
-                "parent_criterion_id": domain_id,
+                "parent_id": domain_id,
                 "criterion_id": f"{domain_id}{subdomain_id}",
             }
             glommed = glom(subdomain, subdomain_spec)
@@ -61,7 +61,7 @@ def transform_raw_performance_response(raw_response: dict) -> pd.DataFrame:
 
             for criterion_id, criterion in glom(subdomain, ("cr", T.items())):
                 normalized_criterion = {
-                    "parent_criterion_id": subdomain_id,
+                    "parent_id": subdomain_id,
                     "criterion_id": f"{domain_id}{subdomain_id}{criterion_id}",
                 }
                 glommed = glom(criterion, criterion_spec)

@@ -1,6 +1,6 @@
 import typer
 
-from .loaders import load_governorates, load_municipalities
+from .loaders import load_governorates, load_municipalities, load_performance_criteria
 from .models import reset_db
 
 app = typer.Typer()
@@ -29,10 +29,18 @@ def command_load_governorates():
     load_governorates()
 
 
+@app_loader.command("criteria")
+def command_load_performance_criteria():
+    typer.echo(typer.style("Loading criteria", fg=typer.colors.GREEN))
+    load_performance_criteria()
+
+
 @app_loader.command("all")
 def command_load_all():
+    command_reset_db()
     command_load_governorates()
     command_load_municipalities()
+    command_load_performance_criteria()
 
 
 # load_performance_criteria()
