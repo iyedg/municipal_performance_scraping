@@ -16,6 +16,8 @@ sqlalchemy-stubs = "^0.3"
 pandas-log = "^0.1.7"
 tqdm = "^4.46.0"
 requests-cache = "^0.5.2"
+pytest-watch = "^4.2.0"
+pytest-testmon = "^1.0.2"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
