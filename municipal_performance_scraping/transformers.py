@@ -1,6 +1,6 @@
-from typing import Dict, List, Union
-
+import pandas as pd
 import pandera as pa
+from glom import T, glom
 
 transformed_performance_df_schema = pa.DataFrameSchema(
     columns={
@@ -14,36 +14,58 @@ transformed_performance_df_schema = pa.DataFrameSchema(
 )
 
 
-def all_numeric_keys(d: dict) -> bool:
-    return all([str(key).isnumeric() for key in d.keys()])
+def clean_string(s: str) -> str:
+    return str(s).replace("\r\n", " ").strip()
 
 
-def indent_keys(d: dict, indented_key: str = "id") -> list:
-    """
-    Return a list of dictionaries where the keys of the input dictionary are values in the child dictionaries.
-    """
-    dicts = []
-    for key, value in d.items():
-        value[indented_key] = key
-        dicts.append(value)
-    return dicts
+def transform_raw_performance_response(raw_response: dict) -> pd.DataFrame:
+    normalized_data = []
 
+    domain_spec = {
+        "name_ar": ("ar", clean_string),
+        "name_fr": ("fr", clean_string),
+        "max_score": ("maxdom", int),
+        "score": ("notedom", int),
+    }
 
-def format_json(
-    raw_performance_response: dict, parent_id: str = None
-) -> Union[List[Dict], Dict]:
-    if all_numeric_keys(raw_performance_response):
-        indented = indent_keys(raw_performance_response)
-        return [format_json(d) for d in indented]
-    else:
-        new_dict = {}
-        for key, value in raw_performance_response.items():
-            if isinstance(value, dict):
-                if all_numeric_keys(value):
-                    new_dict[key] = format_json(value)
-                else:
-                    # merge child name dicts into parent dict
-                    new_dict.update(value)
-            else:
-                new_dict[key] = value
-        return new_dict
+    subdomain_spec = {
+        "name_ar": ("nom.ar", clean_string),
+        "name_fr": ("nom.fr", clean_string),
+        "max_score": ("maxnote", int),
+        "score": ("note", int),
+    }
+
+    criterion_spec = {
+        "name_ar": ("nom.ar", clean_string),
+        "name_fr": ("nom.fr", clean_string),
+        "max_score": ("crmaxnote", int),
+        "score": ("notecrit", int),
+    }
+
+    for domain_id, domain in raw_response.items():
+        normalized_domain = {"parent_criterion_id": None, "criterion_id": domain_id}
+        glommed = glom(domain, domain_spec)
+
+        normalized_domain.update(glommed)
+        normalized_data.append(normalized_domain)
+
+        for subdomain_id, subdomain in glom(domain, ("sd", T.items())):
+            normalized_subdomain = {
+                "parent_criterion_id": domain_id,
+                "criterion_id": f"{domain_id}{subdomain_id}",
+            }
+            glommed = glom(subdomain, subdomain_spec)
+
+            normalized_subdomain.update(glommed)
+            normalized_data.append(normalized_subdomain)
+
+            for criterion_id, criterion in glom(subdomain, ("cr", T.items())):
+                normalized_criterion = {
+                    "parent_criterion_id": subdomain_id,
+                    "criterion_id": f"{domain_id}{subdomain_id}{criterion_id}",
+                }
+                glommed = glom(criterion, criterion_spec)
+
+                normalized_criterion.update(glommed)
+                normalized_data.append(normalized_criterion)
+    return pd.DataFrame(normalized_data)
