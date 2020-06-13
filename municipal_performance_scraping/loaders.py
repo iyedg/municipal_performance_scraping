@@ -4,22 +4,14 @@ import pandas as pd
 from loguru import logger
 from tqdm import tqdm
 
-try:
-    import models
-    from extractors import extract_performance_data, extract_raw_official_names
-    from transformers import (
-        transform_performance_response,
-        transform_performance_for_criteria,
-        transform_performance_for_evaluations,
-    )
-except ImportError:
-    from . import models
-    from .extractors import extract_performance_data, extract_raw_official_names
-    from .transformers import (
-        transform_performance_response,
-        transform_performance_for_criteria,
-        transform_performance_for_evaluations,
-    )
+from . import models
+from .extractors import extract_performance_data, extract_raw_official_names
+
+# from .transformers import (
+#     transform_performance_response,
+#     transform_performance_for_criteria,
+#     transform_performance_for_evaluations,
+# )
 
 
 def load_governorates_prep(df):
