@@ -135,3 +135,4 @@ dmypy.json
 #
 cache.sqlite
 .testmondata
+.venv
